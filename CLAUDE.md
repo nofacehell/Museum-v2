@@ -72,7 +72,7 @@ museum-v2/
 - [x] **Фаза 1** — Prisma schema, docker-compose, db.ts, seed.ts, миграция в Neon
 - [x] **Фаза 2** — Auth.js v5: `src/lib/auth.ts`, proxy, `/login`
 - [x] **Фаза 3** — публичные страницы: главная, каталог, экспонат, категория, 404
-- [ ] **Фаза 4** — Admin CRUD: экспонаты + категории, Server Actions
+- [x] **Фаза 4** — Admin CRUD: дашборд, экспонаты + категории, Server Actions, DeleteButton
 - [ ] **Фаза 5** — загрузка картинок через Cloudinary
 - [ ] **Фаза 6** — тесты (Vitest unit + Playwright e2e)
 - [ ] **Фаза 7** — CI (GitHub Actions) + деплой Vercel
