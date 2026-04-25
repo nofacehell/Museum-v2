@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
+import { SessionProvider } from '@/components/session-provider'
 import './globals.css'
 
 const inter = Inter({
@@ -34,7 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground flex min-h-full flex-col">
-        {children}
+        <SessionProvider>{children}</SessionProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

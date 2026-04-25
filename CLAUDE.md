@@ -25,6 +25,11 @@
 | Тесты     | Vitest (unit) + Playwright (e2e)              |
 | Деплой    | Vercel + Neon                                 |
 
+## Важно: Next.js 16 — breaking changes
+
+- **`middleware.ts` → `proxy.ts`** — файл переименован, API идентичный (default export + `config.matcher`)
+- **`typedRoutes`** вышел из `experimental` — теперь `typedRoutes: true` в корне `nextConfig`
+
 ## Важно: Prisma 7 — breaking changes
 
 Prisma 7 изменил API. `url` и `directUrl` больше не живут в `schema.prisma`.
@@ -51,6 +56,11 @@ museum-v2/
 │   ├── lib/
 │   │   └── db.ts              # PrismaClient singleton (с PrismaPg адаптером)
 │   └── env.ts                 # @t3-oss/env-nextjs — типобезопасные env
+├── src/
+│   ├── proxy.ts               # Auth guard: /admin/* → /login (Next.js 16: proxy, не middleware)
+│   ├── types/next-auth.d.ts   # Расширение Session типа (добавляет user.id)
+│   └── components/
+│       └── session-provider.tsx  # Client wrapper для next-auth SessionProvider
 ├── docker-compose.yml         # Postgres 16 для локальной разработки
 ├── .env.example               # Шаблон — заполни и скопируй в .env
 └── .env                       # НЕ в git — заполни перед запуском
@@ -59,8 +69,8 @@ museum-v2/
 ## Фазы и статус
 
 - [x] **Фаза 0** — скаффолд, shadcn, env-валидация
-- [x] **Фаза 1** — Prisma schema, docker-compose, db.ts, seed.ts _(миграция ждёт БД)_
-- [ ] **Фаза 2** — Auth.js v5: `src/lib/auth.ts`, middleware, `/login`
+- [x] **Фаза 1** — Prisma schema, docker-compose, db.ts, seed.ts, миграция в Neon
+- [x] **Фаза 2** — Auth.js v5: `src/lib/auth.ts`, proxy, `/login`
 - [ ] **Фаза 3** — публичные страницы: главная, каталог, экспонат, категория
 - [ ] **Фаза 4** — Admin CRUD: экспонаты + категории, Server Actions
 - [ ] **Фаза 5** — загрузка картинок через Cloudinary
