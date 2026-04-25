@@ -1,7 +1,25 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
+
+import './src/env'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+        pathname: '/nofacehell/museum-project/**',
+      },
+    ],
+  },
+  experimental: {
+    typedRoutes: true,
+  },
+}
 
-export default nextConfig;
+export default nextConfig
