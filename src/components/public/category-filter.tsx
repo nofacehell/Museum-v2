@@ -1,6 +1,5 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import type { Category } from '@prisma/client'
 import type { Route } from 'next'
 import Link from 'next/link'
@@ -26,20 +25,26 @@ export function CategoryFilter({ categories }: Props) {
     return (qs ? `${pathname}?${qs}` : pathname) as Route
   }
 
+  function itemClass(active: boolean) {
+    return active
+      ? 'text-foreground border-foreground border-b-2 pb-1'
+      : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent pb-1 transition-colors'
+  }
+
   return (
-    <div className="flex flex-wrap gap-2">
-      <Badge render={<Link href={buildHref(null)} />} variant={current === null ? 'default' : 'outline'}>
+    <nav className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm tracking-wide">
+      <Link href={buildHref(null)} className={itemClass(current === null)}>
         Все
-      </Badge>
+      </Link>
       {categories.map((cat) => (
-        <Badge
+        <Link
           key={cat.id}
-          render={<Link href={buildHref(cat.slug)} />}
-          variant={current === cat.slug ? 'default' : 'outline'}
+          href={buildHref(cat.slug)}
+          className={itemClass(current === cat.slug)}
         >
           {cat.name}
-        </Badge>
+        </Link>
       ))}
-    </div>
+    </nav>
   )
 }

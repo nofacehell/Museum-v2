@@ -13,8 +13,15 @@ export default async function EditExhibitPage({ params }: Props) {
   if (!exhibit) notFound()
 
   return (
-    <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Редактировать экспонат</h1>
+    <div>
+      <header className="mb-10">
+        <p className="text-muted-foreground mb-3 text-[10px] tracking-[0.3em] uppercase">
+          Экспонаты / Редактирование
+        </p>
+        <h1 className="font-display text-4xl leading-[1.05] font-medium tracking-tight sm:text-5xl">
+          {exhibit.title}
+        </h1>
+      </header>
       <ExhibitForm exhibit={exhibit} categories={categories} />
     </div>
   )

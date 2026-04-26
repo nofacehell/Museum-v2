@@ -41,15 +41,23 @@ function LoginForm() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Вход</h1>
-          <p className="text-muted-foreground text-sm">Панель администратора</p>
+      <div className="w-full max-w-sm">
+        <div className="mb-10 text-center">
+          <p className="text-muted-foreground mb-3 text-[10px] tracking-[0.3em] uppercase">
+            Музей Электричества
+          </p>
+          <h1 className="font-display text-4xl font-medium tracking-tight">Служебный вход</h1>
+          <div className="bg-foreground/15 mx-auto mt-6 h-px w-12" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label
+              htmlFor="email"
+              className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase"
+            >
+              Email
+            </Label>
             <Input
               id="email"
               name="email"
@@ -61,7 +69,12 @@ function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Пароль</Label>
+            <Label
+              htmlFor="password"
+              className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase"
+            >
+              Пароль
+            </Label>
             <Input
               id="password"
               name="password"
@@ -72,9 +85,13 @@ function LoginForm() {
             />
           </div>
 
-          {error && <p className="text-destructive text-sm">{error}</p>}
+          {error && (
+            <p className="text-destructive border-destructive/30 bg-destructive/5 border px-3 py-2 text-sm">
+              {error}
+            </p>
+          )}
 
-          <Button type="submit" className="w-full" disabled={pending}>
+          <Button type="submit" className="w-full" size="lg" disabled={pending}>
             {pending ? 'Вход…' : 'Войти'}
           </Button>
         </form>

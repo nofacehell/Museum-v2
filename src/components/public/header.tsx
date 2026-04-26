@@ -2,16 +2,25 @@ import Link from 'next/link'
 
 export function Header() {
   return (
-    <header className="border-b">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="font-display text-xl font-semibold tracking-tight">
-          Музей
+    <header className="border-border bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
+        <Link href="/" className="group flex flex-col leading-none">
+          <span className="text-muted-foreground text-[10px] tracking-[0.25em] uppercase">
+            Музей
+          </span>
+          <span className="font-display text-2xl font-semibold tracking-tight">Электричества</span>
         </Link>
-        <nav className="flex items-center gap-6 text-sm">
-          <Link href="/exhibits" className="text-muted-foreground hover:text-foreground transition-colors">
-            Экспонаты
+        <nav className="flex items-center gap-8 text-sm">
+          <Link
+            href="/exhibits"
+            className="hover:text-primary text-foreground/80 tracking-wide transition-colors"
+          >
+            Коллекция
           </Link>
-          <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link
+            href="/about"
+            className="hover:text-primary text-foreground/80 tracking-wide transition-colors"
+          >
             О музее
           </Link>
         </nav>

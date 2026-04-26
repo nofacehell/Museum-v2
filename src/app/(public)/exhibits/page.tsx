@@ -7,7 +7,7 @@ import { Suspense } from 'react'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Экспонаты',
+  title: 'Коллекция',
   description: 'Полный каталог экспонатов музея.',
 }
 
@@ -38,46 +38,63 @@ export default async function ExhibitsPage({ searchParams }: Props) {
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="font-display mb-4 text-4xl font-semibold tracking-tight">Экспонаты</h1>
-        <Suspense>
-          <CategoryFilter categories={categories} />
-        </Suspense>
-      </div>
+    <div>
+      {/* Page header */}
+      <header className="border-border mb-12 border-b pb-10">
+        <p className="text-muted-foreground mb-3 text-xs tracking-[0.3em] uppercase">
+          Постоянная экспозиция
+        </p>
+        <div className="flex items-end justify-between gap-6">
+          <h1 className="font-display text-5xl leading-[1.05] font-medium tracking-tight sm:text-6xl">
+            Коллекция
+          </h1>
+          <p className="text-muted-foreground hidden font-mono text-sm tabular-nums sm:block">
+            {total}&nbsp;
+            {total === 1 ? 'экспонат' : total >= 2 && total <= 4 ? 'экспоната' : 'экспонатов'}
+          </p>
+        </div>
+        <div className="mt-8">
+          <Suspense>
+            <CategoryFilter categories={categories} />
+          </Suspense>
+        </div>
+      </header>
 
       {exhibits.length === 0 ? (
-        <p className="text-muted-foreground py-16 text-center">Экспонаты не найдены.</p>
+        <p className="text-muted-foreground py-24 text-center text-lg">
+          В этом разделе пока нет экспонатов.
+        </p>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {exhibits.map((exhibit) => (
               <ExhibitCard key={exhibit.id} exhibit={exhibit} />
             ))}
           </div>
 
           {totalPages > 1 && (
-            <div className="flex justify-center gap-2">
+            <nav className="border-border mt-20 flex justify-center gap-1 border-t pt-10">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
                 const params = new URLSearchParams()
                 if (category) params.set('category', category)
                 if (p > 1) params.set('page', String(p))
                 const href = `/exhibits${params.toString() ? `?${params}` : ''}`
+                const isActive = p === page
                 return (
                   <a
                     key={p}
                     href={href}
-                    className={`flex h-9 w-9 items-center justify-center rounded border text-sm transition-colors ${
-                      p === page
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'hover:bg-accent'
+                    className={`flex h-10 w-10 items-center justify-center font-mono text-sm tabular-nums transition-colors ${
+                      isActive
+                        ? 'text-primary border-primary border-b-2'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {p}
                   </a>
                 )
               })}
-            </div>
+            </nav>
           )}
         </>
       )}

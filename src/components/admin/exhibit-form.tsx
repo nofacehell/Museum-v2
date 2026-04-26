@@ -125,7 +125,9 @@ export function ExhibitForm({ exhibit, categories }: Props) {
           render={({ field }) => (
             <Select value={field.value ?? null} onValueChange={field.onChange}>
               <SelectTrigger id="categoryId">
-                <SelectValue placeholder="Выберите категорию" />
+                <SelectValue placeholder="Выберите категорию">
+                  {(value) => categories.find((c) => c.id === value)?.name ?? 'Выберите категорию'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {categories.map((cat) => (
