@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table'
 import { deleteExhibit } from '@/lib/actions/exhibits'
 import { db } from '@/lib/db'
+import { formatYear } from '@/lib/format'
 import Link from 'next/link'
 
 export default async function ExhibitsAdminPage() {
@@ -39,13 +40,7 @@ export default async function ExhibitsAdminPage() {
             <TableRow key={ex.id}>
               <TableCell className="font-medium">{ex.title}</TableCell>
               <TableCell className="text-muted-foreground">{ex.category.name}</TableCell>
-              <TableCell className="text-muted-foreground">
-                {ex.year != null
-                  ? ex.year < 0
-                    ? `${Math.abs(ex.year)} до н.э.`
-                    : `${ex.year} г.`
-                  : '—'}
-              </TableCell>
+              <TableCell className="text-muted-foreground">{formatYear(ex.year)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button

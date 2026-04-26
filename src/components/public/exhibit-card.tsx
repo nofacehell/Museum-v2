@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { formatYear } from '@/lib/format'
 import type { Category, Exhibit } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -23,10 +24,8 @@ export function ExhibitCard({ exhibit }: Props) {
         <CardContent className="p-4">
           <p className="text-muted-foreground mb-1 text-xs">{exhibit.category.name}</p>
           <h3 className="font-semibold leading-tight">{exhibit.title}</h3>
-          {exhibit.year && (
-            <p className="text-muted-foreground mt-1 text-sm">
-              {exhibit.year < 0 ? `${Math.abs(exhibit.year)} до н.э.` : `${exhibit.year} г.`}
-            </p>
+          {exhibit.year != null && (
+            <p className="text-muted-foreground mt-1 text-sm">{formatYear(exhibit.year)}</p>
           )}
         </CardContent>
       </Card>

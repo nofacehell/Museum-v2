@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createCategory, updateCategory } from '@/lib/actions/categories'
+import { slugify } from '@/lib/slug'
 import { CategorySchema } from '@/lib/validations/category'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Category } from '@prisma/client'
@@ -25,7 +26,6 @@ export function CategoryForm({ category }: Props) {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(CategorySchema),
@@ -38,13 +38,7 @@ export function CategoryForm({ category }: Props) {
     const name = e.target.value
     register('name').onChange(e)
     if (!category) {
-      setValue(
-        'slug',
-        name
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, ''),
-      )
+      setValue('slug', slugify(name))
     }
   }
 

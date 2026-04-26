@@ -1,4 +1,5 @@
 import { db } from '@/lib/db'
+import { formatYear } from '@/lib/format'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -69,12 +70,10 @@ export default async function ExhibitPage({ params }: Props) {
           </div>
 
           <dl className="space-y-2 text-sm">
-            {exhibit.year && (
+            {exhibit.year != null && (
               <div className="flex gap-2">
                 <dt className="text-muted-foreground w-20 shrink-0">Датировка</dt>
-                <dd>
-                  {exhibit.year < 0 ? `${Math.abs(exhibit.year)} до н.э.` : `${exhibit.year} г.`}
-                </dd>
+                <dd>{formatYear(exhibit.year)}</dd>
               </div>
             )}
             {exhibit.origin && (

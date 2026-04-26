@@ -1,8 +1,10 @@
 'use client'
 
+import { ImageUpload } from '@/components/admin/image-upload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { slugify } from '@/lib/slug'
 import {
   Select,
   SelectContent,
@@ -33,6 +35,7 @@ export function ExhibitForm({ exhibit, categories }: Props) {
     register,
     handleSubmit,
     setValue,
+    watch,
     control,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
@@ -55,13 +58,7 @@ export function ExhibitForm({ exhibit, categories }: Props) {
     const title = e.target.value
     register('title').onChange(e)
     if (!exhibit) {
-      setValue(
-        'slug',
-        title
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, ''),
-      )
+      setValue('slug', slugify(title))
     }
   }
 
@@ -146,8 +143,14 @@ export function ExhibitForm({ exhibit, categories }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="imageUrl">URL изображения</Label>
-        <Input id="imageUrl" {...register('imageUrl')} placeholder="https://..." />
+        <Label>Изображение</Label>
+        <ImageUpload
+          value={watch('imageUrl') ?? ''}
+          onChange={(url, publicId) => {
+            setValue('imageUrl', url, { shouldValidate: true })
+            setValue('imagePublicId', publicId)
+          }}
+        />
         {errors.imageUrl && <p className="text-destructive text-sm">{errors.imageUrl.message}</p>}
       </div>
 
