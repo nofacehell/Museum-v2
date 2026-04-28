@@ -86,9 +86,7 @@ export default async function ExhibitsPage({ searchParams }: Props) {
       {exhibits.length === 0 ? (
         <FadeIn>
           <p className="text-muted-foreground py-24 text-center text-lg">
-            {q
-              ? `По запросу «${q}» ничего не найдено.`
-              : 'В этом разделе пока нет экспонатов.'}
+            {q ? `По запросу «${q}» ничего не найдено.` : 'В этом разделе пока нет экспонатов.'}
           </p>
         </FadeIn>
       ) : (

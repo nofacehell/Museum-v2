@@ -59,7 +59,8 @@ export default async function ExhibitPage({ params }: Props) {
 
   const currentIndex = categoryExhibits.findIndex((e) => e.id === exhibit.id)
   const prev = currentIndex > 0 ? categoryExhibits[currentIndex - 1] : null
-  const next = currentIndex < categoryExhibits.length - 1 ? categoryExhibits[currentIndex + 1] : null
+  const next =
+    currentIndex < categoryExhibits.length - 1 ? categoryExhibits[currentIndex + 1] : null
 
   return (
     <article className="mx-auto max-w-6xl">
@@ -125,14 +126,11 @@ export default async function ExhibitPage({ params }: Props) {
         <FadeIn>
           <nav className="border-border mt-20 flex items-center justify-between border-t pt-8">
             {prev ? (
-              <Link
-                href={`/exhibits/${prev.slug}`}
-                className="group flex max-w-xs flex-col gap-1"
-              >
-                <span className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase transition-colors group-hover:text-foreground">
+              <Link href={`/exhibits/${prev.slug}`} className="group flex max-w-xs flex-col gap-1">
+                <span className="text-muted-foreground group-hover:text-foreground text-[10px] tracking-[0.2em] uppercase transition-colors">
                   ← Предыдущий
                 </span>
-                <span className="font-display text-sm font-medium leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
+                <span className="font-display group-hover:text-primary line-clamp-2 text-sm leading-snug font-medium tracking-tight transition-colors">
                   {prev.title}
                 </span>
               </Link>
@@ -144,10 +142,10 @@ export default async function ExhibitPage({ params }: Props) {
                 href={`/exhibits/${next.slug}`}
                 className="group flex max-w-xs flex-col items-end gap-1 text-right"
               >
-                <span className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase transition-colors group-hover:text-foreground">
+                <span className="text-muted-foreground group-hover:text-foreground text-[10px] tracking-[0.2em] uppercase transition-colors">
                   Следующий →
                 </span>
-                <span className="font-display text-sm font-medium leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
+                <span className="font-display group-hover:text-primary line-clamp-2 text-sm leading-snug font-medium tracking-tight transition-colors">
                   {next.title}
                 </span>
               </Link>
