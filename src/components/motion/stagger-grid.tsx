@@ -1,7 +1,7 @@
 'use client'
 
-import { motion, type Variants } from 'framer-motion'
-import { Children, type ReactNode } from 'react'
+import { motion, useInView, type Variants } from 'framer-motion'
+import { Children, useRef, type ReactNode } from 'react'
 import { EASE_OUT } from './easing'
 
 type Props = {
@@ -28,13 +28,16 @@ const item: Variants = {
 }
 
 export function StaggerGrid({ children, className, stagger = 0.08, delay = 0.05 }: Props) {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, amount: 0 })
+
   return (
     <motion.div
+      ref={ref}
       className={className}
       variants={container(stagger, delay)}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-80px' }}
+      animate={isInView ? 'visible' : 'hidden'}
     >
       {Children.map(children, (child, i) => (
         <motion.div key={i} variants={item}>
