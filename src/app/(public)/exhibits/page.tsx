@@ -1,3 +1,5 @@
+import { FadeIn } from '@/components/motion/fade-in'
+import { StaggerGrid } from '@/components/motion/stagger-grid'
 import { CategoryFilter } from '@/components/public/category-filter'
 import { ExhibitCard } from '@/components/public/exhibit-card'
 import { db } from '@/lib/db'
@@ -40,61 +42,70 @@ export default async function ExhibitsPage({ searchParams }: Props) {
   return (
     <div>
       {/* Page header */}
-      <header className="border-border mb-12 border-b pb-10">
-        <p className="text-muted-foreground mb-3 text-xs tracking-[0.3em] uppercase">
-          Постоянная экспозиция
-        </p>
-        <div className="flex items-end justify-between gap-6">
-          <h1 className="font-display text-5xl leading-[1.05] font-medium tracking-tight sm:text-6xl">
-            Коллекция
-          </h1>
-          <p className="text-muted-foreground hidden font-mono text-sm tabular-nums sm:block">
-            {total}&nbsp;
-            {total === 1 ? 'экспонат' : total >= 2 && total <= 4 ? 'экспоната' : 'экспонатов'}
+      <FadeIn y={20} duration={0.6}>
+        <header className="border-border mb-12 border-b pb-10">
+          <p className="text-muted-foreground mb-3 text-xs tracking-[0.3em] uppercase">
+            Постоянная экспозиция
           </p>
-        </div>
-        <div className="mt-8">
-          <Suspense>
-            <CategoryFilter categories={categories} />
-          </Suspense>
-        </div>
-      </header>
+          <div className="flex items-end justify-between gap-6">
+            <h1 className="font-display text-5xl leading-[1.05] font-medium tracking-tight sm:text-6xl">
+              Коллекция
+            </h1>
+            <p className="text-muted-foreground hidden font-mono text-sm tabular-nums sm:block">
+              {total}&nbsp;
+              {total === 1 ? 'экспонат' : total >= 2 && total <= 4 ? 'экспоната' : 'экспонатов'}
+            </p>
+          </div>
+          <div className="mt-8">
+            <Suspense>
+              <CategoryFilter categories={categories} />
+            </Suspense>
+          </div>
+        </header>
+      </FadeIn>
 
       {exhibits.length === 0 ? (
-        <p className="text-muted-foreground py-24 text-center text-lg">
-          В этом разделе пока нет экспонатов.
-        </p>
+        <FadeIn>
+          <p className="text-muted-foreground py-24 text-center text-lg">
+            В этом разделе пока нет экспонатов.
+          </p>
+        </FadeIn>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <StaggerGrid
+            className="grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            stagger={0.06}
+          >
             {exhibits.map((exhibit) => (
               <ExhibitCard key={exhibit.id} exhibit={exhibit} />
             ))}
-          </div>
+          </StaggerGrid>
 
           {totalPages > 1 && (
-            <nav className="border-border mt-20 flex justify-center gap-1 border-t pt-10">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
-                const params = new URLSearchParams()
-                if (category) params.set('category', category)
-                if (p > 1) params.set('page', String(p))
-                const href = `/exhibits${params.toString() ? `?${params}` : ''}`
-                const isActive = p === page
-                return (
-                  <a
-                    key={p}
-                    href={href}
-                    className={`flex h-10 w-10 items-center justify-center font-mono text-sm tabular-nums transition-colors ${
-                      isActive
-                        ? 'text-primary border-primary border-b-2'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {p}
-                  </a>
-                )
-              })}
-            </nav>
+            <FadeIn>
+              <nav className="border-border mt-20 flex justify-center gap-1 border-t pt-10">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+                  const params = new URLSearchParams()
+                  if (category) params.set('category', category)
+                  if (p > 1) params.set('page', String(p))
+                  const href = `/exhibits${params.toString() ? `?${params}` : ''}`
+                  const isActive = p === page
+                  return (
+                    <a
+                      key={p}
+                      href={href}
+                      className={`flex h-10 w-10 items-center justify-center font-mono text-sm tabular-nums transition-colors ${
+                        isActive
+                          ? 'text-primary border-primary border-b-2'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {p}
+                    </a>
+                  )
+                })}
+              </nav>
+            </FadeIn>
           )}
         </>
       )}

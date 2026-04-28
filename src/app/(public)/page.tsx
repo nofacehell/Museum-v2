@@ -1,4 +1,7 @@
 import { ExhibitCard } from '@/components/public/exhibit-card'
+import { FadeIn } from '@/components/motion/fade-in'
+import { HeroLine, HeroReveal } from '@/components/motion/hero-reveal'
+import { StaggerGrid } from '@/components/motion/stagger-grid'
 import { Button } from '@/components/ui/button'
 import { db } from '@/lib/db'
 import type { Route } from 'next'
@@ -20,57 +23,74 @@ export default async function HomePage() {
     <div className="space-y-24 sm:space-y-32">
       {/* Hero */}
       <section className="relative pt-12 pb-8 sm:pt-20 sm:pb-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-muted-foreground mb-6 text-xs tracking-[0.3em] uppercase">
-            Est. 2026 · Постоянная экспозиция
-          </p>
-          <h1 className="font-display text-5xl leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl">
-            История электричества
-            <span className="text-primary block italic"> — в одном месте</span>
-          </h1>
-          <div className="bg-border mx-auto my-8 h-px w-16" />
-          <p className="text-foreground/70 mx-auto max-w-xl text-lg leading-relaxed text-balance">
-            От первых опытов с янтарём до индустриальной революции. Артефакты, документы и
-            устройства, изменившие представление человечества об энергии.
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <Button render={<Link href="/exhibits" />} size="lg">
-              Смотреть коллекцию
-            </Button>
-            <Button render={<Link href="/about" />} variant="ghost" size="lg">
-              О музее →
-            </Button>
-          </div>
-        </div>
+        <HeroReveal className="mx-auto max-w-3xl text-center">
+          <HeroLine>
+            <p className="text-muted-foreground mb-6 text-xs tracking-[0.3em] uppercase">
+              Est. 2026 · Постоянная экспозиция
+            </p>
+          </HeroLine>
+          <HeroLine>
+            <h1 className="font-display text-5xl leading-[1.05] font-medium tracking-tight text-balance sm:text-7xl">
+              История электричества
+              <span className="text-primary block italic"> — в одном месте</span>
+            </h1>
+          </HeroLine>
+          <HeroLine>
+            <div className="bg-border mx-auto my-8 h-px w-16" />
+          </HeroLine>
+          <HeroLine>
+            <p className="text-foreground/70 mx-auto max-w-xl text-lg leading-relaxed text-balance">
+              От первых опытов с янтарём до индустриальной революции. Артефакты, документы и
+              устройства, изменившие представление человечества об энергии.
+            </p>
+          </HeroLine>
+          <HeroLine>
+            <div className="mt-10 flex items-center justify-center gap-4">
+              <Button render={<Link href="/exhibits" />} size="lg">
+                Смотреть коллекцию
+              </Button>
+              <Button render={<Link href="/about" />} variant="ghost" size="lg">
+                О музее →
+              </Button>
+            </div>
+          </HeroLine>
+        </HeroReveal>
       </section>
 
       {/* Recent exhibits */}
       {recentExhibits.length > 0 && (
         <section>
-          <SectionHeader
-            number="01"
-            title="Последние поступления"
-            linkHref="/exhibits"
-            linkLabel="Все экспонаты"
-          />
-          <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          <FadeIn>
+            <SectionHeader
+              number="01"
+              title="Последние поступления"
+              linkHref="/exhibits"
+              linkLabel="Все экспонаты"
+            />
+          </FadeIn>
+          <StaggerGrid className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
             {recentExhibits.map((exhibit) => (
               <ExhibitCard key={exhibit.id} exhibit={exhibit} />
             ))}
-          </div>
+          </StaggerGrid>
         </section>
       )}
 
       {/* Categories */}
       {categories.length > 0 && (
         <section>
-          <SectionHeader number="02" title="Коллекции" />
-          <div className="border-border grid grid-cols-1 border-t sm:grid-cols-2 lg:grid-cols-4">
+          <FadeIn>
+            <SectionHeader number="02" title="Коллекции" />
+          </FadeIn>
+          <StaggerGrid
+            className="border-border grid grid-cols-1 border-t sm:grid-cols-2 lg:grid-cols-4"
+            stagger={0.06}
+          >
             {categories.map((cat, i) => (
               <Link
                 key={cat.id}
                 href={`/exhibits?category=${cat.slug}`}
-                className="group border-border hover:bg-secondary/60 relative border-b p-8 transition-colors sm:border-r last:sm:border-r-0 [&:nth-child(2)]:lg:border-r [&:nth-child(3)]:lg:border-r"
+                className="group border-border hover:bg-secondary/60 relative block border-b p-8 transition-colors sm:border-r last:sm:border-r-0 [&:nth-child(2)]:lg:border-r [&:nth-child(3)]:lg:border-r"
               >
                 <span className="text-muted-foreground absolute top-4 right-4 text-xs tabular-nums">
                   №&nbsp;{String(i + 1).padStart(2, '0')}
@@ -86,22 +106,24 @@ export default async function HomePage() {
                 </span>
               </Link>
             ))}
-          </div>
+          </StaggerGrid>
         </section>
       )}
 
       {/* Quote / about teaser */}
-      <section className="border-border border-y py-20 text-center">
-        <blockquote className="mx-auto max-w-3xl">
-          <p className="font-display text-2xl leading-relaxed font-light tracking-tight text-balance italic sm:text-3xl">
-            «Электричество — это не только наука, но и история человеческого любопытства, проходящая
-            через века.»
-          </p>
-          <footer className="text-muted-foreground mt-6 text-xs tracking-[0.2em] uppercase">
-            Из вступительного зала музея
-          </footer>
-        </blockquote>
-      </section>
+      <FadeIn y={32} duration={0.9}>
+        <section className="border-border border-y py-20 text-center">
+          <blockquote className="mx-auto max-w-3xl">
+            <p className="font-display text-2xl leading-relaxed font-light tracking-tight text-balance italic sm:text-3xl">
+              «Электричество — это не только наука, но и история человеческого любопытства,
+              проходящая через века.»
+            </p>
+            <footer className="text-muted-foreground mt-6 text-xs tracking-[0.2em] uppercase">
+              Из вступительного зала музея
+            </footer>
+          </blockquote>
+        </section>
+      </FadeIn>
     </div>
   )
 }
