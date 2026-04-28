@@ -4,11 +4,12 @@ import {
   ExhibitLabelItem,
 } from '@/components/motion/exhibit-detail-motion'
 import { FadeIn } from '@/components/motion/fade-in'
+import { StaggerGrid } from '@/components/motion/stagger-grid'
+import { ExhibitCard } from '@/components/public/exhibit-card'
 import { db } from '@/lib/db'
 import { formatYear } from '@/lib/format'
 import type { Metadata } from 'next'
 import type { Route } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -41,6 +42,25 @@ export default async function ExhibitPage({ params }: Props) {
 
   if (!exhibit) notFound()
 
+  // Related exhibits and prev/next in same category ordered by year
+  const [related, categoryExhibits] = await Promise.all([
+    db.exhibit.findMany({
+      where: { categoryId: exhibit.categoryId, id: { not: exhibit.id } },
+      take: 3,
+      orderBy: [{ year: 'asc' }, { createdAt: 'asc' }],
+      include: { category: { select: { name: true, slug: true } } },
+    }),
+    db.exhibit.findMany({
+      where: { categoryId: exhibit.categoryId },
+      orderBy: [{ year: 'asc' }, { createdAt: 'asc' }],
+      select: { id: true, slug: true, title: true },
+    }),
+  ])
+
+  const currentIndex = categoryExhibits.findIndex((e) => e.id === exhibit.id)
+  const prev = currentIndex > 0 ? categoryExhibits[currentIndex - 1] : null
+  const next = currentIndex < categoryExhibits.length - 1 ? categoryExhibits[currentIndex + 1] : null
+
   return (
     <article className="mx-auto max-w-6xl">
       {/* Breadcrumb */}
@@ -59,16 +79,7 @@ export default async function ExhibitPage({ params }: Props) {
 
       <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
         {/* Image */}
-        <ExhibitImage>
-          <Image
-            src={exhibit.imageUrl}
-            alt={exhibit.title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 60vw"
-            className="object-cover"
-            priority
-          />
-        </ExhibitImage>
+        <ExhibitImage src={exhibit.imageUrl} alt={exhibit.title} />
 
         {/* Museum label */}
         <ExhibitLabel>
@@ -109,9 +120,71 @@ export default async function ExhibitPage({ params }: Props) {
         </ExhibitLabel>
       </div>
 
-      {/* Bottom rule */}
+      {/* Prev / Next in category */}
+      {(prev || next) && (
+        <FadeIn>
+          <nav className="border-border mt-20 flex items-center justify-between border-t pt-8">
+            {prev ? (
+              <Link
+                href={`/exhibits/${prev.slug}`}
+                className="group flex max-w-xs flex-col gap-1"
+              >
+                <span className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase transition-colors group-hover:text-foreground">
+                  ← Предыдущий
+                </span>
+                <span className="font-display text-sm font-medium leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
+                  {prev.title}
+                </span>
+              </Link>
+            ) : (
+              <div />
+            )}
+            {next ? (
+              <Link
+                href={`/exhibits/${next.slug}`}
+                className="group flex max-w-xs flex-col items-end gap-1 text-right"
+              >
+                <span className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase transition-colors group-hover:text-foreground">
+                  Следующий →
+                </span>
+                <span className="font-display text-sm font-medium leading-snug tracking-tight group-hover:text-primary transition-colors line-clamp-2">
+                  {next.title}
+                </span>
+              </Link>
+            ) : (
+              <div />
+            )}
+          </nav>
+        </FadeIn>
+      )}
+
+      {/* Related exhibits */}
+      {related.length > 0 && (
+        <section className="mt-24">
+          <FadeIn>
+            <div className="border-border mb-10 flex items-baseline justify-between border-b pb-4">
+              <h2 className="font-display text-2xl font-medium tracking-tight">
+                Ещё из раздела «{exhibit.category.name}»
+              </h2>
+              <Link
+                href={`/exhibits?category=${exhibit.category.slug}` as Route}
+                className="text-muted-foreground hover:text-foreground text-xs tracking-[0.15em] uppercase transition-colors"
+              >
+                Весь раздел →
+              </Link>
+            </div>
+          </FadeIn>
+          <StaggerGrid className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((item) => (
+              <ExhibitCard key={item.id} exhibit={item} />
+            ))}
+          </StaggerGrid>
+        </section>
+      )}
+
+      {/* Back link */}
       <FadeIn>
-        <div className="border-border mt-24 border-t pt-8">
+        <div className="border-border mt-20 border-t pt-8">
           <Link
             href="/exhibits"
             className="text-muted-foreground hover:text-foreground text-sm tracking-wide transition-colors"

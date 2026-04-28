@@ -2,6 +2,7 @@ import { FadeIn } from '@/components/motion/fade-in'
 import { StaggerGrid } from '@/components/motion/stagger-grid'
 import { CategoryFilter } from '@/components/public/category-filter'
 import { ExhibitCard } from '@/components/public/exhibit-card'
+import { SearchInput } from '@/components/public/search-input'
 import { db } from '@/lib/db'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
@@ -16,14 +17,25 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 12
 
 type Props = {
-  searchParams: Promise<{ category?: string; page?: string }>
+  searchParams: Promise<{ category?: string; page?: string; q?: string }>
 }
 
 export default async function ExhibitsPage({ searchParams }: Props) {
-  const { category, page: pageParam } = await searchParams
+  const { category, page: pageParam, q } = await searchParams
   const page = Math.max(1, parseInt(pageParam ?? '1', 10))
 
-  const where = category ? { category: { slug: category } } : {}
+  const where = {
+    ...(category ? { category: { slug: category } } : {}),
+    ...(q
+      ? {
+          OR: [
+            { title: { contains: q, mode: 'insensitive' as const } },
+            { description: { contains: q, mode: 'insensitive' as const } },
+            { origin: { contains: q, mode: 'insensitive' as const } },
+          ],
+        }
+      : {}),
+  }
 
   const [exhibits, total, categories] = await Promise.all([
     db.exhibit.findMany({
@@ -56,10 +68,17 @@ export default async function ExhibitsPage({ searchParams }: Props) {
               {total === 1 ? 'экспонат' : total >= 2 && total <= 4 ? 'экспоната' : 'экспонатов'}
             </p>
           </div>
-          <div className="mt-8">
-            <Suspense>
-              <CategoryFilter categories={categories} />
-            </Suspense>
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <Suspense>
+                <CategoryFilter categories={categories} />
+              </Suspense>
+            </div>
+            <div className="sm:w-64">
+              <Suspense>
+                <SearchInput />
+              </Suspense>
+            </div>
           </div>
         </header>
       </FadeIn>
@@ -67,7 +86,9 @@ export default async function ExhibitsPage({ searchParams }: Props) {
       {exhibits.length === 0 ? (
         <FadeIn>
           <p className="text-muted-foreground py-24 text-center text-lg">
-            В этом разделе пока нет экспонатов.
+            {q
+              ? `По запросу «${q}» ничего не найдено.`
+              : 'В этом разделе пока нет экспонатов.'}
           </p>
         </FadeIn>
       ) : (
@@ -87,6 +108,7 @@ export default async function ExhibitsPage({ searchParams }: Props) {
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
                   const params = new URLSearchParams()
                   if (category) params.set('category', category)
+                  if (q) params.set('q', q)
                   if (p > 1) params.set('page', String(p))
                   const href = `/exhibits${params.toString() ? `?${params}` : ''}`
                   const isActive = p === page

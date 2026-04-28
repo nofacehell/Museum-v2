@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
         hostname: 'raw.githubusercontent.com',
         pathname: '/nofacehell/museum-project/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+        pathname: '/**',
+      },
     ],
   },
   typedRoutes: true,

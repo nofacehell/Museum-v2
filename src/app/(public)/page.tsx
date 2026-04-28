@@ -3,14 +3,20 @@ import { FadeIn } from '@/components/motion/fade-in'
 import { HeroLine, HeroReveal } from '@/components/motion/hero-reveal'
 import { StaggerGrid } from '@/components/motion/stagger-grid'
 import { Button } from '@/components/ui/button'
+import { formatYear } from '@/lib/format'
 import { db } from '@/lib/db'
 import type { Route } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  const [recentExhibits, categories] = await Promise.all([
+  const [featured, recentExhibits, categories] = await Promise.all([
+    db.exhibit.findFirst({
+      orderBy: [{ year: 'asc' }, { createdAt: 'asc' }],
+      include: { category: { select: { name: true, slug: true } } },
+    }),
     db.exhibit.findMany({
       take: 6,
       orderBy: { createdAt: 'desc' },
@@ -57,6 +63,49 @@ export default async function HomePage() {
         </HeroReveal>
       </section>
 
+      {/* Featured exhibit */}
+      {featured && (
+        <FadeIn y={32} duration={0.8}>
+          <section>
+            <div className="mb-6 flex items-baseline gap-4">
+              <span className="text-muted-foreground font-mono text-xs tabular-nums">Экспонат</span>
+              <h2 className="font-display text-lg font-medium tracking-tight text-balance">
+                Избранное
+              </h2>
+            </div>
+            <Link href={`/exhibits/${featured.slug}`} className="group block">
+              <div className="border-border grid overflow-hidden border sm:grid-cols-[1fr_1.1fr]">
+                <div className="bg-secondary/40 relative aspect-[4/3] overflow-hidden sm:aspect-auto">
+                  <Image
+                    src={featured.imageUrl}
+                    alt={featured.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                </div>
+                <div className="flex flex-col justify-center p-8 sm:p-12">
+                  <p className="text-muted-foreground text-[11px] tracking-[0.2em] uppercase">
+                    {featured.category.name}
+                    {featured.year != null && (
+                      <span className="ml-4 font-mono">{formatYear(featured.year)}</span>
+                    )}
+                  </p>
+                  <h3 className="font-display group-hover:text-primary mt-3 text-3xl leading-tight font-medium tracking-tight transition-colors sm:text-4xl">
+                    {featured.title}
+                  </h3>
+                  <div className="bg-foreground/15 my-6 h-px w-8" />
+                  <p className="text-foreground/70 line-clamp-4 text-sm leading-relaxed">
+                    {featured.description}
+                  </p>
+                  <p className="text-primary mt-6 text-sm tracking-wide">Читать подробнее →</p>
+                </div>
+              </div>
+            </Link>
+          </section>
+        </FadeIn>
+      )}
+
       {/* Recent exhibits */}
       {recentExhibits.length > 0 && (
         <section>
@@ -90,7 +139,7 @@ export default async function HomePage() {
               <Link
                 key={cat.id}
                 href={`/exhibits?category=${cat.slug}`}
-                className="group border-border hover:bg-secondary/60 relative block border-b p-8 transition-colors sm:border-r last:sm:border-r-0 [&:nth-child(2)]:lg:border-r [&:nth-child(3)]:lg:border-r"
+                className="group border-border hover:bg-secondary/60 relative block border-b p-8 transition-colors sm:border-r last:sm:border-r-0 nth-2:lg:border-r nth-3:lg:border-r"
               >
                 <span className="text-muted-foreground absolute top-4 right-4 text-xs tabular-nums">
                   №&nbsp;{String(i + 1).padStart(2, '0')}
@@ -110,7 +159,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Quote / about teaser */}
+      {/* Quote */}
       <FadeIn y={32} duration={0.9}>
         <section className="border-border border-y py-20 text-center">
           <blockquote className="mx-auto max-w-3xl">

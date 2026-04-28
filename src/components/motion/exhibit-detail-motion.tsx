@@ -1,8 +1,11 @@
 'use client'
 
+import { ImageLightbox } from '@/components/public/image-lightbox'
 import { motion, type Variants } from 'framer-motion'
 import { type ReactNode } from 'react'
 import { EASE_OUT } from './easing'
+
+const ImageLightboxLazy = ImageLightbox
 
 const labelContainer: Variants = {
   hidden: {},
@@ -20,7 +23,9 @@ const labelItem: Variants = {
   },
 }
 
-export function ExhibitImage({ children }: { children: ReactNode }) {
+type ExhibitImageProps = { src: string; alt: string }
+
+export function ExhibitImage({ src, alt }: ExhibitImageProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 1.04 }}
@@ -28,7 +33,7 @@ export function ExhibitImage({ children }: { children: ReactNode }) {
       transition={{ duration: 1.1, ease: EASE_OUT }}
       className="bg-secondary/40 relative aspect-square overflow-hidden lg:sticky lg:top-28 lg:self-start"
     >
-      {children}
+      <ImageLightboxLazy src={src} alt={alt} />
     </motion.div>
   )
 }
